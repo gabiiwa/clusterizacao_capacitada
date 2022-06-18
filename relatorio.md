@@ -1,4 +1,4 @@
-
+# Construtivo
 
 ```python
 
@@ -13,7 +13,7 @@ guloso:
     while E diferente de vazio:
         e = heuristica_local(E, c) # Heuristica de seleção de elementos
         if e é null:
-            s = c união s
+            s = funcao_add_na_solucao(c, s)
             c = []
         else:
             s_linha = c união e
@@ -24,7 +24,7 @@ guloso:
                 c = c união e
 
     if c diferente de vazio:
-        s = c união s
+        s = funcao_add_na_solucao(c, s)
     
     return s
 ```
@@ -53,6 +53,22 @@ funcao_verificacao(s_linha):
         return True
     
 ```
+
+```python
+funcao_add_na_solucao(c, s):
+    while c é diferente de vazio:
+        c_i = pega um elemento de c
+        for s_j em s:
+            # Testa se existe uma aresta pra esse cluster, pega a melhor entre as que
+            # existem e faz o calculo da qualidade da solução pra ver se melhora
+            if s_j união c_i é conexo e melhora a solução s:
+                adiciona c_i ao cluster s_j
+                remove c_i de c
+    return s
+    
+```
+
+## Iterações do construtivo para teste
 
 P = 3,2,1,1,1,1,1,1,1,1\
 E = 3,2,1,8,4,7,5,0,6,9
@@ -209,3 +225,4 @@ return s = [
     [2,1,0,6],
     [8,7,5,9]
 ]
+
