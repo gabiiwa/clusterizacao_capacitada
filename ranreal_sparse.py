@@ -51,6 +51,6 @@ class RanRealSparse:
         )
 
 
-inst = RanRealSparse('instancias/ranreal/RanReal480_17.txt')
-
-print(inst)
+# Teste, comentar quando terminar de desenvolver
+# inst = RanRealSparse('instancias/Sparse82/Sparse82_01.txt')
+# print(inst)

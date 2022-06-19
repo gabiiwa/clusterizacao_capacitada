@@ -41,6 +41,7 @@ class Grafo:
 #     '1': {'2','3'}
 #     '2': {'1','3'}
 # }
+# Teste, comentar quando terminar de desenvolver
 # g = Grafo()
 # g.add_no(1, 6)
 # g.add_no(2, 4)
