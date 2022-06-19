@@ -31,9 +31,11 @@ class RanRealSparse:
                     # Cria aresta com peso
                     no = ls.split(' ')[0]
                     no_vizinho = ls.split(' ')[1]
-                    peso = ls.split(' ')[2]
-                    self.grafo_instancia.add_aresta(no, no_vizinho, peso)
-                    self.num_arestas += 1
+                    peso = float(ls.split(' ')[2])
+                    # 0.0 é quando não tem ligação
+                    if peso != 0.0:
+                        self.grafo_instancia.add_aresta(no, no_vizinho, peso)
+                        self.num_arestas += 1
                 i+=1
 
     def getGrafo(self):

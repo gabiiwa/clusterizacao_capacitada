@@ -1,25 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# class No:
-#     def __init__(self, id, peso):
-#         self.id = id
-#         self.arestas=[]
-#         self.peso_no = peso
-
-#     def getPeso(self):
-#         return self.peso_no            
-
-# class Aresta:
-#     def __init__(self, origem, destino, peso):
-#         self.origem=origem
-#         self.destino=destino
-#         self.peso=peso
-        
-#     #retorna peso da Aresta
-#     def getPeso(self):
-#         return self.peso
-
-#%%
 class Grafo:
     def __init__(self):
         self.grafo = {} #dicionário de nós
@@ -38,11 +18,6 @@ class Grafo:
             self.grafo[str(x)].append(y)
             self.arestas.append({'id': str(x), 'vizinho': str(y), 'peso': peso})
             
-#%%
-# {
-#     '1': {'2','3'}
-#     '2': {'1','3'}
-# }
 # Teste, comentar quando terminar de desenvolver
 # g = Grafo()
 # g.add_no(1, 6)

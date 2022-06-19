@@ -28,6 +28,8 @@ class handover:
                 elif i>2 and i<=self.numero_elementos+2:
                     self.grafo_instancia.add_no(i-3,float(ls))
                 else:
+                    #calculando restrição inferior
+                    #média dos pesos de todos nós
                     self.L = sum(self.grafo_instancia.pesos_nos)/self.numero_elementos
                     #lendo o array de pesos da aresta,uma linha únic
                     array_pesos = np.array([float(peso) for peso in ls.split(" ")])
@@ -37,7 +39,6 @@ class handover:
                         for viz_ind,valor_viz in enumerate(no_linha):
                             #0.0 é quando não tem ligação
                             if valor_viz != 0.0:
-                                print("No:{};vizinho:{} e peso:{}".format(no_ind,viz_ind,valor_viz))
                                 self.grafo_instancia.add_aresta(no_ind,viz_ind,valor_viz)
                                 self.num_arestas+=1
 
