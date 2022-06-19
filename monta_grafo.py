@@ -24,11 +24,13 @@ class Grafo:
     def __init__(self):
         self.grafo = {} #dicionário de nós
         self.nos = [] # lista de dicionários, tendo o formato {id, peso}
+        self.pesos_nos = []
         self.arestas = [] # lista de dicionários, tendo o formato {id, vizinho, peso}
 
     def add_no(self, id, peso):
         self.grafo[str(id)] = []
         self.nos.append({'id': str(id), 'peso': peso})
+        self.pesos_nos.append(peso)
 
     def add_aresta(self, no, no_vizinho, peso):
         # print('Add aresta {}-{} com peso {}'.format(no, no_vizinho, peso))
