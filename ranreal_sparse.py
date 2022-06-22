@@ -37,7 +37,12 @@ class RanRealSparse:
                         self.grafo_instancia.add_aresta(no, no_vizinho, peso)
                         self.num_arestas += 1
                 i+=1
+    def getNumClusters(self):
+        return self.numero_clusters
 
+    def getNumElementos(self):
+        return self.numero_elementos
+        
     def getGrafo(self):
         return self.grafo_instancia
 

@@ -44,6 +44,12 @@ class handover:
 
 
                 i+=1
+                
+    def getNumClusters(self):
+        return self.numero_clusters
+
+    def getNumElementos(self):
+        return self.numero_elementos
 
     def getGrafo(self):
         return self.grafo_instancia
