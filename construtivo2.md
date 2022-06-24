@@ -8,22 +8,36 @@ def construtivo2 (instancia):
     S = [] # Solução inicial (começa vazia)
     c = [] # Fila de espera, ou cluster parcial
     n = instancia.num_clusters # Número de clusters indicado na instância     
-    V = ordena_nós(instancia) # Vetor ordenado pelo grau dos vértices, do maior para menor
+    V = ordena_vertices(instancia) # Vetor ordenado pelo grau dos vértices, do maior para menor
 
     # Na etapa 1, monta n clusters que atendem a restrição inferior
     while V diferente de vazio and len(S) < n:
         v = heuristica_local(V, c) # Seleciona melhor primeiro vértice
         c_linha = c união v # Constroi um cluster parcial
-        if soma_peso_vertices(s_linha) >= L:
+        if soma_peso_vertices(c_linha) >= L and soma_peso_vertices(c_linha) <= U:
             # Se o conjunto c atende pelo menos a restrição inferior
             # adiciona o cluster parcial a solução
             s = s união c_linha
             # Limpa o cluster parcial
             c = []
-        else:
+        elif soma_peso_vertices(c_linha) < L and soma_peso_vertices(c_linha) <= U:
             # Se o conjunto c parcial não atende a restrição inferior
             # esse conjunto passa a ser o conjunto c
             c = c_linha
+        else:
+            c_espera = c_espera união v
+            if soma_peso_vertices(c_espera) >= L and soma_peso_vertices(c_espera) <= U:
+                # Se o conjunto c atende pelo menos a restrição inferior
+                # adiciona o cluster parcial a solução
+                s = s união c_espera
+                # Limpa o cluster parcial
+                c_espera = []
+
+    # Etapa 1.1: Se ainda tiver alguma coisa no c_espera, coloca denovo no V
+    # e recalcula a ordenação
+    if c_espera não for vazio:
+        V = V união c_espera
+        V = ordena_vertices(V)
 
     # Na etapa 2, coloca os vértices restantes na melhor posição dentro
     # dos clusters já criados
@@ -72,28 +86,35 @@ def heuristica_local(V, c):
     # Enquanto nenhum vértice foi escolhido
     while aux == None:
 
-        if i >= len(V):
-            # Escolhe o vértice de menor grau se nenhum outro vértice tem
-            # aresta pro conjunto c
-            v = vértice de V com menor grau
-            aux = v
-            remove v de V
-        else:
+        if i < len(V):
             # Obtem o vértice no indice i
             v = V[i] 
             if v tem aresta com peso maior que 0 pra algum vértice de c:
                 aux = v
                 remove v de V
             i+=1
+        else:
+            # Escolhe o vértice de menor grau se nenhum outro vértice tem
+            # aresta pro conjunto c
+            v = vértice de V com menor grau
+            aux = v
+            remove v de V
+            
 
     return aux    
 ```
 
 ## Iterações do construtivo para teste
 
-V = [{3,3},{2,2},{1,1},{8,1},{4,1},{7,1},{5,1},{0,1},{6,1},{9,1}]
+V = [{7,1},{8,1},{5,1},{2,2},{6,1},{4,1},{3,3},{1,1},{0,1},{9,1}]
+n = 3
 
 #### 1ª iteração
+
+S = []
+v = {7,1}
+c_linha = [{7,1}]
+c = []
 
 #### 2ª iteração
 
