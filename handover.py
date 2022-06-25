@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
 
 from monta_grafo import Grafo
+# from igraph import *
 import numpy as np
 
-class handover:
+class Handover:
     def __init__(self, caminho):
         self._caminho = caminho
-        self.grafo_instancia = Grafo()
+        self.grafo_instancia = Graph()
         self.num_arestas = 0
         #faz a leitura do arquivo da instancia
         with open(caminho) as instancia:
             #anda pelas linhas
             i=0
             for line in instancia.readlines():
-                print("line:{}\n".format(line))
+
                 ls = line.rstrip()
-                print("ls:{}\n".format(ls))
+                
                 if i==0:
                     # Lendo a primeira linha
                     linha1 = ls
@@ -66,6 +67,6 @@ class handover:
         )
 
 
-inst = handover('instancias/handover/20_5_270001.txt')
+inst = Handover('instancias/handover/20_5_270001.txt')
 
 print(inst)

@@ -20,7 +20,7 @@ def construtivo2 (instancia):
             s = s união c_linha
             # Limpa o cluster parcial
             c = []
-        elif soma_peso_vertices(c_linha) < L and soma_peso_vertices(c_linha) <= U:
+        elif soma_peso_vertices(c_linha) < L:
             # Se o conjunto c parcial não atende a restrição inferior
             # esse conjunto passa a ser o conjunto c
             c = c_linha
@@ -41,6 +41,7 @@ def construtivo2 (instancia):
 
     # Na etapa 2, coloca os vértices restantes na melhor posição dentro
     # dos clusters já criados
+    #V só será vazio se já formamos o número de clusters máximo
     while V diferente de vazio:
         v = seleciona o primeiro vértice de V # Seleciona o vértice de maior grau
         maior_soma = -1
@@ -89,7 +90,7 @@ def heuristica_local(V, c):
         if i < len(V):
             # Obtem o vértice no indice i
             v = V[i] 
-            if v tem aresta com peso maior que 0 pra algum vértice de c:
+            if v tem aresta pra algum vértice de c:
                 aux = v
                 remove v de V
             i+=1
