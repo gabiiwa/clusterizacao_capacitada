@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from igraph import *
+import time
 
 class Grafo:
     def __init__(self):
@@ -14,23 +16,23 @@ class Grafo:
 
     def get_no(self, id):
         # Filtra os itens da lista de nós pela chave 'id'
-        res = filter(lambda x: x['id'] == str(id), self.nos)
-        if len(list(res)) == 0:
+        res = list(filter(lambda x: x['id'] == str(id), self.nos))
+        if len(res) == 0:
             # Se não retornar nenhum vértice na lista de retorno
             return None
         else:
             # Se encontrar algum vértice com 'id' igual, vai ser somente um, e retorna ele
-            return list(res)[0]
+            return res[0]
     
     def get_aresta(self, id, vizinho):
         # Filtra a lista de arestas por id e vizinho
-        res = filter(lambda x: x['id'] == str(id) and x['vizinho'] == str(vizinho), self.nos)
-        if len(list(res)) == 0:
+        res = list(filter(lambda x: x['id'] == str(id) and x['vizinho'] == str(vizinho), self.arestas))
+        if len(res) == 0:
             # Se não retornar nenhuma aresta na lista de retorno
             return None
         else:
             # Se encontrar alguma aresta com 'id' e 'vizinho' igual, vai ser somente um, e retorna ele
-            return list(res)[0]
+            return res[0]
 
     def add_aresta(self, no, no_vizinho, peso):
         # print('Add aresta {}-{} com peso {}'.format(no, no_vizinho, peso))
@@ -42,17 +44,41 @@ class Grafo:
             # Cria a aresta
             self.arestas.append({'id': str(x), 'vizinho': str(y), 'peso': peso})
 
-# Teste, comentar quando terminar de desenvolver
-g = Grafo()
-g.add_no(1, 6)
-g.add_no(2, 4)
-g.add_no(3, 8)
-g.add_aresta(1,2,3.5)
-g.add_aresta(1,3,4.5)
+    def get_subgrafo(self, vertices):
+        g_sub = Grafo()
 
-print('grafo', g.grafo)
-print('arestas', g.arestas)
-print('nos', g.nos)
+        for v in vertices:
+            g_sub.add_no(v['id'], v['peso'])
+
+        for i in range(len(vertices)):
+            for j in range(i, len(vertices)):
+                if i != j:
+                    a = self.get_aresta(vertices[i]['id'], vertices[j]['id'])
+                    if a != None:
+                        g_sub.add_aresta(a['id'], a['vizinho'], a['peso'])
+        
+        return g_sub
+
+    def imprime_grafo(self, grafo):
+        g = Graph()
+        g.add_vertices(list(map(lambda x: x['id'], grafo.nos)))
+        for aresta in grafo.arestas:
+            g.add_edges([(aresta['id'],aresta['vizinho'])])
+        layout = g.layout("kamada_kawai")
+        plot(g, 'grafo_{}.png'.format(time.time()), layout=layout)
+
+
+# Teste, comentar quando terminar de desenvolver
+# g = Grafo()
+# g.add_no(1, 6)
+# g.add_no(2, 4)
+# g.add_no(3, 8)
+# g.add_aresta(1,2,3.5)
+# g.add_aresta(1,3,4.5)
+
+# print('grafo', g.grafo)
+# print('arestas', g.arestas)
+# print('nos', g.nos)
 
 # https://igraph.org/python/tutorial/latest/tutorial.html
 # from igraph import *

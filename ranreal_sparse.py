@@ -26,7 +26,7 @@ class RanRealSparse:
                     lista_pesos_nos = linha1[linha1.index('W')+1:]
                     # Cria os nós no grafo com os pesos
                     for i in range(len(lista_pesos_nos)):
-                        self.grafo_instancia.add_no(i, lista_pesos_nos[i])
+                        self.grafo_instancia.add_no(i, float(lista_pesos_nos[i]))
                 else:
                     # Cria aresta com peso
                     no = ls.split(' ')[0]
@@ -38,19 +38,19 @@ class RanRealSparse:
                         self.num_arestas += 1
                 i+=1
     def getNumClusters(self):
-        return self.numero_clusters
+        return int(self.numero_clusters)
 
     def getNumElementos(self):
-        return self.numero_elementos
+        return int(self.numero_elementos)
         
     def getGrafo(self):
         return self.grafo_instancia
 
     def get_L(self):
-        return self.L
+        return float(self.L)
 
     def get_U(self):
-        return self.U
+        return float(self.U)
 
     def __str__(self) -> str:
         return '--Instância--\nnumero_elementos: {}\nnumero_clusters: {}\nnum_arestas: {}\nL: {}\nU: {}'.format(
@@ -59,5 +59,6 @@ class RanRealSparse:
 
 
 # Teste, comentar quando terminar de desenvolver
-# inst = RanRealSparse('instancias/Sparse82/Sparse82_01.txt')
-# print(inst)
+#inst = RanRealSparse('instancias/Sparse82/Sparse82_01.txt')
+#print(inst)
+#inst.getGrafo().imprime_grafo(inst.getGrafo())
