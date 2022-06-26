@@ -47,19 +47,19 @@ class Handover:
                 i+=1
                 
     def getNumClusters(self):
-        return self.numero_clusters
+        return int(self.numero_clusters)
 
     def getNumElementos(self):
-        return self.numero_elementos
+        return int(self.numero_elementos)
 
     def getGrafo(self):
         return self.grafo_instancia
 
     def get_L(self):
-        return self.L
+        return float(self.L)
 
     def get_U(self):
-        return self.U
+        return float(self.U)
 
     def __str__(self) -> str:
         return '--Instância--\nnumero_elementos: {}\nnumero_clusters: {}\nnum_arestas: {}\nL: {}\nU: {}'.format(

@@ -64,7 +64,7 @@ def construtivo2 (instancia):
 
         if indice_do_cluster_pra_entrar != -1:
             # Coloca o v_i no cluster que deu a maior soma
-            s = v_i união s[indice_do_cluster_pra_entrar] 
+            S = v_i união S[indice_do_cluster_pra_entrar] 
             retira v_i da lista c
         else:
             # O vértice v não tem aresta pra nenhum cluster, ou ele não
@@ -74,10 +74,10 @@ def construtivo2 (instancia):
             # Percorre os clusters de S
             for s_j em S:
                 if soma_peso_vertices(s_j união v_i) <= U:
-                    s = v_i união s_j 
+                    s_j = v_i união s_j 
                     retira v_i da lista c
                     break # Interrompe o loop quando achar um cluster pra colocar o vértice
-    return s
+    return S
 ```
 
 ```python

@@ -1,8 +1,5 @@
-# Busca Local
+# -*- coding: utf-8 -*-
 
-busca_local usando First Improvement
-    
-```python
 def busca_local(instancia):
     # Gera a solução inicial com o construtivo
     S = construtivo(instancia)
@@ -16,20 +13,18 @@ def busca_local(instancia):
         else:
             S = melhor_vizinho
     return S
-```
 
-```python
 def ordena_vertices(s):
-    return vértices de s_j ordenados pela soma dos pesos das arestas, do menor pro maior
+    return #vértices de s_j ordenados pela soma dos pesos das arestas, do menor pro maior
 
 def calcula_qualidade_entrada(v, s):
-    return soma das arestas de v_i entrando em s_k
+    return #soma das arestas de v_i entrando em s_k
 
 def calcula_qualidade_saida(v, s):
-    return soma das arestas de v_i saindo de s_j
-```
+    return #soma das arestas de v_i saindo de s_j
 
-```python
+#----------------
+
 def primeiro_vizinho_melhor(S):
     # Vizinhança de tirar um vertice de um cluster e colocar no outro
 
@@ -50,8 +45,3 @@ def primeiro_vizinho_melhor(S):
                 else:
                     conta_sol_inviaveis += 1
     return None
-
-```
-
-s = [[3,4],[2,1,0,6],[8,7,5,9]]
-s1 = [[3,4],[2,0,6],[1,8,7,5,9]]
