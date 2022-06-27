@@ -25,22 +25,30 @@ def calcula_qualidade_saida(v, s):
 
 #----------------
 
+def intersection(lst1, lst2):
+    return list(set(lst1).intersection(lst2))
+
+def union(lst1, lst2):
+    return list(set(lst1).union(lst2))
+
 def primeiro_vizinho_melhor(S):
     # Vizinhança de tirar um vertice de um cluster e colocar no outro
 
-    for s_j in S: # lista os clusters da solução
-        vertices_ordenados = ordena_vertices(s_j)
+    for j in range(len(S)): # lista os clusters da solução
+        vertices_ordenados = ordena_vertices(S[j])
         v_i = vertices_ordenados[0]
         #for v_i in vertices_ordenados: # Percorre a lista os vértices do cluster em (v_i) como vértice a mudar
-        qualidade_saida = calcula_qualidade_saida(v_i, s_j)
-        for s_k in S: # Percorre a solução em s_k, como cluster de destino
-            if s_k != s_j: # Garante que o cluster de destino (s_k) é diferente do cluster de origem (s_j)
-                qualidade_entrada = calcula_qualidade_entrada(v_i, s_k)
-                if verifica_restricao(v_i interseção s_j) and verifica_restricao(v_i união s_k):
+        qualidade_saida = calcula_qualidade_saida(v_i, S[j])
+        for k in range(j, len(S)): # Percorre a solução em s_k, como cluster de destino
+            if k != j: # Garante que o cluster de destino (s_k) é diferente do cluster de origem (s_j)
+                qualidade_entrada = calcula_qualidade_entrada(v_i, S[k])
+                if verifica_restricao(intersection([v_i], S[j])) and verifica_restricao(union([v_i],S[k])): 
                     conta_sol_viaveis += 1
                     if qualidade_entrada > qualidade_saida:
-                        retira v_i de s_j
-                        colocar v_i em s_k
+                        # retira v_i de s_j
+                        S[j].remove(v_i)
+                        # colocar v_i em s_k
+                        S[k].append(v_i)
                         return S
                 else:
                     conta_sol_inviaveis += 1
