@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 from ranreal_sparse import RanRealSparse
 #from handover import Handover
 
@@ -106,39 +107,42 @@ def construtivo(instancia):
     # dos clusters já criados
     #V só será vazio se já formamos o número de clusters máximo
     while len(V) > 0:
-        v = V.sort(reverse=True, key=lambda x: x['grau'])[0]# Seleciona o vértice de maior grau
+        V.sort(reverse=True, key=lambda x: x['grau'])
+        v = V[0]# Seleciona o vértice de maior grau
         maior_soma = -1
         indice_do_cluster_pra_entrar = -1
-
+        soma_aresta = -1
         # Percorre os clusters de S
-        for s_j em S:
+        for j,s_j in enumerate(S):
             # Faz a soma dos pesos das arestas de v_i para o cluster s_j
             # percorrendo todas as arestas de v_i e testando se existem
-            for v_j em s_j:
-                if existe aresta entre v_j e v_i:
-                    soma_aresta += peso da aresta v_j e v_i
+            for v_j in s_j:
+                aresta_vj_v = instancia.getGrafo().get_aresta(v_j,v)
+                if type(aresta_vj_v)!=type(None):
+                    soma_aresta = sum(aresta_vj_v) #peso da aresta v_j e v_i
             # Se a soma das arestas for maior que a soma já armazenada
             # indica o cluster j como o cluster que o v_i vai entrar
             if soma_aresta > maior_soma:
-                if soma_peso_vertices(s_j união v_i) <= U:
+                if soma_peso_vertices(s_j + v) <= instancia.get_U():
                     # Se s_j união v_i atende a restrição superior
                     # marca esse cluster pro vértice entrar
                     indice_do_cluster_pra_entrar = j
 
         if indice_do_cluster_pra_entrar != -1:
-            # Coloca o v_i no cluster que deu a maior soma
-            S = v_i união S[indice_do_cluster_pra_entrar] 
-            retira v_i da lista c
+            # Coloca o v no cluster que deu a maior soma
+            S = v + S[indice_do_cluster_pra_entrar] 
+            #retira v_i da lista c
+            V = V[1:]
         else:
             # O vértice v não tem aresta pra nenhum cluster, ou ele não
             # cabe nos clusters onde ele pode entrar. Nesse caso deve-se
             # incluir esse vértice em qualquer cluster onde ele possa entrar
             
             # Percorre os clusters de S
-            for s_j em S:
-                if soma_peso_vertices(s_j união v_i) <= U:
-                    s_j = v_i união s_j 
-                    retira v_i da lista c
+            for s_j in S:
+                if soma_peso_vertices(s_j + [v]) <= instancia.get_U():
+                    s_j = [v] + s_j 
+                    V = V[1:]
                     break # Interrompe o loop quando achar um cluster pra colocar o vértice
     return S
 
