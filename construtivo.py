@@ -3,6 +3,7 @@
 
 from ranreal_sparse import RanRealSparse
 #from handover import Handover
+from instancia_teste import InstanciaTeste
 
 # v é do formato {'id': str, 'peso': float, 'grau': int}
 # c é no formato [{'id': str, 'peso': float, 'grau': int}]
@@ -51,7 +52,7 @@ def soma_peso_vertices(c):
     #print('soma_peso_vertices',c)
     return sum(map(lambda x: x['peso'], c))
 
-def verifica_restricao(candidato):
+def verifica_restricao(instancia, candidato):
     if soma_peso_vertices(candidato) >= instancia.get_L() and soma_peso_vertices(candidato) <= instancia.get_U():
         return True
     return False
@@ -76,7 +77,7 @@ def construtivo(instancia):
         v = heuristica_local(instancia, V, c_parcial) # Seleciona melhor primeiro vértice
         c_linha = c_parcial + [v] # Constroi um cluster parcial
         #print('c_linha', c_linha)
-        if verifica_restricao(c_linha):
+        if verifica_restricao(instancia, c_linha):
             # Se o conjunto c atende pelo menos a restrição inferior
             # adiciona o cluster parcial a solução
             S.append(c_linha)
@@ -88,7 +89,7 @@ def construtivo(instancia):
             c_parcial = c_linha
         else:
             c_espera = c_espera.append(v)
-            if verifica_restricao(c_espera):
+            if verifica_restricao(instancia, c_espera):
                 # Se o conjunto c atende pelo menos a restrição inferior
                 # adiciona o cluster parcial a solução
                 S.append(c_espera)
@@ -103,34 +104,40 @@ def construtivo(instancia):
             V.append(c_espera[i])
         V.sort(reverse=True, key=lambda x: x['grau'])
 
+    print("--- Solução da etapa 1 ---")
+    printSolucao(instancia, S)
+
     # Na etapa 2, coloca os vértices restantes na melhor posição dentro
     # dos clusters já criados
     #V só será vazio se já formamos o número de clusters máximo
+    print(V)
     while len(V) > 0:
         V.sort(reverse=True, key=lambda x: x['grau'])
         v = V[0]# Seleciona o vértice de maior grau
         maior_soma = -1
         indice_do_cluster_pra_entrar = -1
-        soma_aresta = -1
+        soma_aresta = 0
         # Percorre os clusters de S
         for j,s_j in enumerate(S):
             # Faz a soma dos pesos das arestas de v_i para o cluster s_j
             # percorrendo todas as arestas de v_i e testando se existem
             for v_j in s_j:
-                aresta_vj_v = instancia.getGrafo().get_aresta(v_j,v)
+                #print('-->',v_j,v,v_j)
+                aresta_vj_v = instancia.getGrafo().get_aresta(v_j['id'], v['id'])
                 if type(aresta_vj_v)!=type(None):
-                    soma_aresta = sum(aresta_vj_v) #peso da aresta v_j e v_i
+                    soma_aresta += aresta_vj_v['peso'] #peso da aresta v_j e v_i
             # Se a soma das arestas for maior que a soma já armazenada
             # indica o cluster j como o cluster que o v_i vai entrar
             if soma_aresta > maior_soma:
-                if soma_peso_vertices(s_j + v) <= instancia.get_U():
+                if soma_peso_vertices(s_j + [v]) <= instancia.get_U():
                     # Se s_j união v_i atende a restrição superior
                     # marca esse cluster pro vértice entrar
                     indice_do_cluster_pra_entrar = j
+                    maior_soma = soma_aresta
 
         if indice_do_cluster_pra_entrar != -1:
             # Coloca o v no cluster que deu a maior soma
-            S = v + S[indice_do_cluster_pra_entrar] 
+            S[indice_do_cluster_pra_entrar]  = S[indice_do_cluster_pra_entrar] + [v]
             #retira v_i da lista c
             V = V[1:]
         else:
@@ -139,14 +146,20 @@ def construtivo(instancia):
             # incluir esse vértice em qualquer cluster onde ele possa entrar
             
             # Percorre os clusters de S
+            entrou=False
             for s_j in S:
                 if soma_peso_vertices(s_j + [v]) <= instancia.get_U():
-                    s_j = [v] + s_j 
+                    s_j = s_j + [v] 
                     V = V[1:]
+                    entrou=True
                     break # Interrompe o loop quando achar um cluster pra colocar o vértice
+            if entrou == False:
+                # Não conseguiu colocar em nenhum cluster. Cria um novo mesmo q seja inválido
+                S.append([v])
+                V = V[1:]
     return S
 
-def getQualidade(S):
+def getQualidade(instancia, S):
     qualidade = 0
     for s in S:
         # Obtem o subgrafo dessa solução
@@ -161,13 +174,21 @@ def printSolucao(instancia, S, imprimir=False):
     for s in S:
         print(list(map(lambda x: x['id'], s)), 'Restrição: {} <= {} <= {}'.format(instancia.get_L(),soma_peso_vertices(s),instancia.get_U()))
     
-    print('\nQualidade da solução: {}'.format(getQualidade(S)))
+    print('\nQualidade da solução: {}'.format(getQualidade(instancia, S)))
 
     # Gera um PNG do grafo, se imprimir=True
-    # if imprimir:
-    #     instancia.getGrafo().imprime_grafo(subgrafo_solucao)
+    if imprimir:
+        k=0
+        for s in S:
+            subgrafo_cluster = instancia.getGrafo().get_subgrafo(s)
+            instancia.getGrafo().imprime_grafo(subgrafo_cluster, 'cluster{}'.format(k))
+            k+=1
 
 # Teste, comentar quando terminar de desenvolver
-instancia = RanRealSparse('instancias/Sparse82/Sparse82_01.txt')
-#print(heuristica_local(instancia, instancia.getGrafo().nos[3:], instancia.getGrafo().nos[0:3]))
-printSolucao(instancia, construtivo(instancia))
+# instancia = RanRealSparse('instancias/Sparse82/Sparse82_01.txt')
+# printSolucao(instancia, construtivo(instancia))
+
+
+# Teste com a instância do enunciado
+instancia2 = InstanciaTeste()
+printSolucao(instancia2, construtivo(instancia2), True)

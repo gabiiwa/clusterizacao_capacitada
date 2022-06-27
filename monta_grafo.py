@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from igraph import *
-import time
+from os import path, makedirs
 
 class Grafo:
     def __init__(self):
@@ -59,13 +59,15 @@ class Grafo:
         
         return g_sub
 
-    def imprime_grafo(self, grafo):
+    def imprime_grafo(self, grafo, prefixo=""):
         g = Graph()
         g.add_vertices(list(map(lambda x: x['id'], grafo.nos)))
         for aresta in grafo.arestas:
             g.add_edges([(aresta['id'],aresta['vizinho'])])
         layout = g.layout("kamada_kawai")
-        plot(g, 'grafo_{}.png'.format(time.time()), layout=layout)
+        if path.exists('plots') == False:
+            makedirs("plots")
+        plot(g, 'plots/grafo_{}.png'.format(prefixo), layout=layout)
 
 
 # Teste, comentar quando terminar de desenvolver
