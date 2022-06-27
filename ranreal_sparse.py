@@ -52,7 +52,7 @@ class RanRealSparse:
     def get_U(self):
         return float(self.U)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return '--Instância--\nnumero_elementos: {}\nnumero_clusters: {}\nnum_arestas: {}\nL: {}\nU: {}'.format(
             self.numero_elementos, self.numero_clusters, self.num_arestas, self.L, self.U
         )
