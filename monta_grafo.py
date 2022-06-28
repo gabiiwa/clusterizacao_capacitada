@@ -24,6 +24,9 @@ class Grafo:
             # Se encontrar algum vértice com 'id' igual, vai ser somente um, e retorna ele
             return res[0]
     
+    def existe_aresta(self, id, vizinho):
+        return str(vizinho) in self.grafo[str(id)]
+
     def get_aresta(self, id, vizinho):
         # Filtra a lista de arestas por id e vizinho
         res = list(filter(lambda x: x['id'] == str(id) and x['vizinho'] == str(vizinho), self.arestas))
@@ -37,7 +40,7 @@ class Grafo:
     def add_aresta(self, no, no_vizinho, peso):
         # print('Add aresta {}-{} com peso {}'.format(no, no_vizinho, peso))
         for x, y in [(no, no_vizinho), (no_vizinho, no)]:
-            self.grafo[str(x)].append(y)
+            self.grafo[str(x)].append(str(y))
             # Acrescenta o grau de cada nó
             no_aux = self.get_no(x)
             no_aux['grau'] = no_aux['grau'] + 1
@@ -61,10 +64,21 @@ class Grafo:
 
     def imprime_grafo(self, grafo, prefixo=""):
         g = Graph()
-        g.add_vertices(list(map(lambda x: x['id'], grafo.nos)))
+        v_list = list(map(lambda x: x['id'], grafo.nos))
+        p_list = []
+        g.add_vertices(v_list)
+        arestas_add = []
+
         for aresta in grafo.arestas:
-            g.add_edges([(aresta['id'],aresta['vizinho'])])
-        layout = g.layout("kamada_kawai")
+            tp_aresta = (aresta['id'], aresta['vizinho'])
+            if tp_aresta not in arestas_add and (tp_aresta[1], tp_aresta[0]) not in arestas_add:
+                arestas_add.append(tp_aresta)
+                p_list.append(aresta['peso'])
+                g.add_edges([tp_aresta])
+
+        g.vs['label'] = v_list
+        g.es['label'] = p_list
+        layout = g.layout("large_graph")
         if path.exists('plots') == False:
             makedirs("plots")
         plot(g, 'plots/grafo_{}.png'.format(prefixo), layout=layout)

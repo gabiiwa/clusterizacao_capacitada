@@ -63,3 +63,5 @@ class InstanciaTeste:
         return 5.0
 
 
+instancia = InstanciaTeste()
+instancia.getGrafo().imprime_grafo(instancia.getGrafo(), 'instancia_teste')

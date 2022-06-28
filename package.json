@@ -1,0 +1,13 @@
+{
+  "name": "trabalho1-dcc136",
+  "version": "1.0.0",
+  "description": "Trabalho 1 para a disciplina de Inteligência Computacional de 2022.1",
+  "main": "index.js",
+  "repository": "https://github.com/gabiiwa/clusterizacao_capacitada",
+  "author": "Gabriele Iwashima, Thiago Almeida",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "rodar": "node index.js"
+  }
+}

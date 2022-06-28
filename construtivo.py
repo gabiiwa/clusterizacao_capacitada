@@ -4,6 +4,7 @@
 from ranreal_sparse import RanRealSparse
 #from handover import Handover
 from instancia_teste import InstanciaTeste
+import time
 
 # v é do formato {'id': str, 'peso': float, 'grau': int}
 # c é no formato [{'id': str, 'peso': float, 'grau': int}]
@@ -15,7 +16,7 @@ def tem_aresta_pra_c(instancia, v, c):
         return True
 
     for vertice in c:
-        if instancia.getGrafo().get_aresta(v['id'], vertice['id']):
+        if instancia.getGrafo().existe_aresta(v['id'], vertice['id']):
             return True
     return False
 
@@ -53,7 +54,8 @@ def soma_peso_vertices(c):
     return sum(map(lambda x: x['peso'], c))
 
 def verifica_restricao(instancia, candidato):
-    if soma_peso_vertices(candidato) >= instancia.get_L() and soma_peso_vertices(candidato) <= instancia.get_U():
+    soma = soma_peso_vertices(candidato)
+    if soma >= instancia.get_L() and soma <= instancia.get_U():
         return True
     return False
 
@@ -104,15 +106,15 @@ def construtivo(instancia):
             V.append(c_espera[i])
         V.sort(reverse=True, key=lambda x: x['grau'])
 
-    print("--- Solução da etapa 1 ---")
-    printSolucao(instancia, S)
+    #print("--- Solução da etapa 1 ---")
+    #printSolucao(instancia, S)
 
     # Na etapa 2, coloca os vértices restantes na melhor posição dentro
     # dos clusters já criados
-    #V só será vazio se já formamos o número de clusters máximo
-    print(V)
+    # V só será vazio se já formamos o número de clusters máximo
+    num_v = len(V)
     while len(V) > 0:
-        V.sort(reverse=True, key=lambda x: x['grau'])
+        #V.sort(reverse=True, key=lambda x: x['grau'])
         v = V[0]# Seleciona o vértice de maior grau
         maior_soma = -1
         indice_do_cluster_pra_entrar = -1
@@ -157,6 +159,7 @@ def construtivo(instancia):
                 # Não conseguiu colocar em nenhum cluster. Cria um novo mesmo q seja inválido
                 S.append([v])
                 V = V[1:]
+        print('etapa 2:',len(V),'de',num_v)
     return S
 
 def getQualidade(instancia, S):
@@ -184,11 +187,27 @@ def printSolucao(instancia, S, imprimir=False):
             instancia.getGrafo().imprime_grafo(subgrafo_cluster, 'cluster{}'.format(k))
             k+=1
 
+
 # Teste, comentar quando terminar de desenvolver
-# instancia = RanRealSparse('instancias/Sparse82/Sparse82_01.txt')
-# printSolucao(instancia, construtivo(instancia))
+# instancia = RanRealSparse('instancias/Sparse82/Sparse82_02.txt')
+# inicio = time.time()
+# resultado = construtivo(instancia)
+# fim = time.time()
+# printSolucao(instancia,resultado , True)
+# print('Tempo de execução:',fim-inicio)
+
+instancia = RanRealSparse('instancias/RanReal480/RanReal480_12.txt')
+inicio = time.time()
+resultado = construtivo(instancia)
+fim = time.time()
+printSolucao(instancia,resultado , True)
+print('Tempo de execução:',fim-inicio)
 
 
 # Teste com a instância do enunciado
-instancia2 = InstanciaTeste()
-printSolucao(instancia2, construtivo(instancia2), True)
+# instancia2 = InstanciaTeste()
+# printSolucao(instancia2, construtivo(instancia2), True)
+
+# Da planília 
+# Sparce-82_01.txt Melhor solução: 1342.17
+# RanReal480_12.txt Melhor solução: 497973.87
