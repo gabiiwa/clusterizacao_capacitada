@@ -105,7 +105,8 @@ module.exports = busca_local;
 let conta_sol_inviaveis = 0;
 let conta_sol_viaveis = 0;
 
-function complementar(lst1, lst2) {
+//faz a diferença dos conjuntos de nos do cluster com o nó candidato
+function diferenca(lst1, lst2) {
     let comp = lst1.filter(value => lst2.includes(value) === false)
     return comp;
 }
@@ -123,30 +124,39 @@ function primeiro_vizinho_melhor(instancia, S) {
         if (vertices_ordenados.length === 0) {
             continue
         }
-        v_i = vertices_ordenados[0]
-        //console.log('teste2',v_i, S[j])
-        //for v_i in vertices_ordenados: // Percorre a lista os vértices do cluster em (v_i) como vértice a mudar
-        qualidade_saida = calcula_qualidade_saida(instancia, v_i, S[j])
-        for (let k = j; k < S.length; k++) { // Percorre a solução em s_k, como cluster de destino
-            if (k !== j) { // Garante que o cluster de destino (s_k) é diferente do cluster de origem (s_j)
-                //console.log('teste c',v_i,S[j],complementar([v_i], S[j]))
-                //console.log('teste u',v_i,S[k],union([v_i],S[k]))
-                if (verifica_restricao(instancia, complementar(S[j], [v_i])) && verifica_restricao(instancia, union(S[k], [v_i]))) {
-                    qualidade_entrada = calcula_qualidade_entrada(instancia, v_i, S[k])
-                    conta_sol_viaveis += 1
-                    //console.log('qualidade_entrada',qualidade_entrada,'qualidade_saida',qualidade_saida)
-                    if (qualidade_entrada > qualidade_saida) {
-                        // retira v_i de s_j
-                        S[j].splice(S[j].indexOf(v_i), 1)
-                        // colocar v_i em s_k
-                        S[k].push(v_i)
-                        return S
+        //proximo nó candidato dentro de um mesmo cluster
+        for (let prox_ind = 0; prox_ind < S[j].length; prox_ind++) {
+            //itera nos nós do cluster j, ordenados pelos pesos das arestas
+            v_i = vertices_ordenados[prox_ind]
+            if (verifica_restricao(instancia, diferenca(S[j], [v_i]))) {
+                qualidade_saida = calcula_qualidade_saida(instancia, v_i, S[j])
+                for (let k = j; k < S.length; k++) { // Percorre a solução em s_k, como cluster de destino
+                    if (k !== j) { // Garante que o cluster de destino (s_k) é diferente do cluster de origem (s_j)
+                        //console.log('teste c',v_i,S[j],diferenca([v_i], S[j]))
+                        //console.log('teste u',v_i,S[k],union([v_i],S[k]))
+                        if (verifica_restricao(instancia, union(S[k], [v_i]))) {
+                            qualidade_entrada = calcula_qualidade_entrada(instancia, v_i, S[k])
+                            conta_sol_viaveis += 1
+                            //console.log('qualidade_entrada',qualidade_entrada,'qualidade_saida',qualidade_saida)
+                            if (qualidade_entrada > qualidade_saida) {
+                                // retira v_i de s_j
+                                S[j].splice(S[j].indexOf(v_i), 1)
+                                // colocar v_i em s_k
+                                S[k].push(v_i)
+                                return S
+                            }
+                        } else {
+                            conta_sol_inviaveis += 1
+                        }
                     }
-                } else {
-                    conta_sol_inviaveis += 1
                 }
             }
+
         }
+
+        //console.log('teste2',v_i, S[j])
+        //for v_i in vertices_ordenados: // Percorre a lista os vértices do cluster em (v_i) como vértice a mudar
+
     }
     return null
 }
