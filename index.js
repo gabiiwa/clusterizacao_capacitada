@@ -7,17 +7,17 @@ const Handover = require('./handover')
 const busca_local = require('./busca_local')
 
 const instanciasRodar = [
-    // 'instancias/Sparse82/Sparse82_01.txt',
-    // 'instancias/Sparse82/Sparse82_02.txt',
-    // 'instancias/Sparse82/Sparse82_03.txt',
+    'instancias/Sparse82/Sparse82_01.txt',
+    'instancias/Sparse82/Sparse82_02.txt',
+    'instancias/Sparse82/Sparse82_03.txt',
 
      'instancias/RanReal240/RanReal240_01.txt',
-    // 'instancias/RanReal240/RanReal240_04.txt',
-    // 'instancias/RanReal240/RanReal240_07.txt',
+    'instancias/RanReal240/RanReal240_04.txt',
+    'instancias/RanReal240/RanReal240_07.txt',
     
-    // 'instancias/RanReal480/RanReal480_01.txt',
-    // 'instancias/RanReal480/RanReal480_06.txt',
-    // 'instancias/RanReal480/RanReal480_12.txt',
+    'instancias/RanReal480/RanReal480_01.txt',
+    'instancias/RanReal480/RanReal480_06.txt',
+    'instancias/RanReal480/RanReal480_12.txt',
 
     'instancias/handover/20_5_270001.txt',
     'instancias/handover/20_10_270001.txt',
