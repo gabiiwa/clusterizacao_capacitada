@@ -8,6 +8,6 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "rodar": "node index.js"
+    "trabalho": "node index.js"
   }
 }

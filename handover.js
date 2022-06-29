@@ -1,5 +1,6 @@
 const Grafo = require('./grafo')
 const fs = require('fs')
+var path = require("path");
 
 class Handover {
 
@@ -81,7 +82,7 @@ class Handover {
     }
 
     get_L() {
-        return this.L
+        return 0 //this.L
     }
 
     get_U() {
@@ -93,4 +94,4 @@ class Handover {
 module.exports = Handover; 
 
 // let inst = new Handover('instancias/handover/20_5_270001.txt')
-// console.log(inst)
+// console.log(JSON.stringify(inst, null, 4))

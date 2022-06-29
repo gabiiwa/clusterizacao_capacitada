@@ -56,7 +56,7 @@ function heuristica_local(instancia, V, c) {
 function soma_peso_vertices(c) {
     //console.log('soma_peso_vertices',c)
     let somaArr = [...c]
-    const soma = somaArr.map(x => x.peso).reduce((x, y) => x + y)
+    const soma = somaArr.map(x => x.peso).reduce((x, y) => x + y, 0)
     return soma
 }
 
@@ -127,18 +127,19 @@ function construtivo(instancia) {
     // Na etapa 2, coloca os vértices restantes na melhor posição dentro
     // dos clusters já criados
     // V só será vazio se já formamos o número de clusters máximo
-    num_v = V.length
+    //num_v = V.length
     while (V.length > 0) {
         //V.sort(reverse=True, key=lambda x: x['grau'])
-        v = V[0]// Seleciona o vértice de maior grau
+        let v = V[0]// Seleciona o vértice de maior grau
         maior_soma = -1
         indice_do_cluster_pra_entrar = -1
-        soma_aresta = 0
+        
 
         // Percorre os clusters de S
         for (const [j, s_j] of S.entries()) {
             // Faz a soma dos pesos das arestas de v_i para o cluster s_j
             // percorrendo todas as arestas de v_i e testando se existem
+            soma_aresta = 0
             for (const v_j of s_j) {
                 //console.log('-->',v_j,v,v_j)
                 aresta_vj_v = instancia.getGrafo().getAresta(v_j.id, v.id)
@@ -184,10 +185,11 @@ function construtivo(instancia) {
                 V.splice(0, 1)
             }
         }
-        console.log('etapa 2:', V.length, 'de', num_v)
+        //console.log('etapa 2:', V.length, 'de', num_v)
     }
     return S
 }
+
 
 function getQualidade(instancia, S) {
     let qualidade = 0
@@ -203,7 +205,8 @@ function getQualidade(instancia, S) {
     return qualidade
 }
 
-function printSolucao(instancia, S) {
+
+function printSolucao(instancia, S ) {
     console.log(`\nSolução para ${instancia.getNumClusters()} clusters`)
     for (const s of S) {
         console.log(s.map(x => x.id), `\tRestrição: ${instancia.get_L()} <= ${soma_peso_vertices(s)} <= ${instancia.get_U()}`)
@@ -211,6 +214,13 @@ function printSolucao(instancia, S) {
     console.log(`\nQualidade da solução: ${getQualidade(instancia, S)}`)
     console.log("Solução no formato pra planília de resultados")
     console.log(`S={${S.map(c => `{${c.map(x => x.id).join(',')}}`)}}`)
+}
+
+module.exports = {
+    construtivo,
+    getQualidade,
+    printSolucao,
+    verifica_restricao
 }
 
 // Teste, comentar quando terminar de desenvolver
@@ -228,12 +238,12 @@ function printSolucao(instancia, S) {
 // printSolucao(instancia, resultado)
 // console.log('Tempo de execução:',fim-inicio)
 
-const instancia = new Handover('instancias/Handover/20_5_270001.txt')
-let inicio = new Date().getTime() / 1000;
-let resultado = construtivo(instancia)
-let fim = new Date().getTime() / 1000;
-printSolucao(instancia, resultado)
-console.log('Tempo de execução:', fim - inicio)
+// const instancia = new Handover('instancias/handover/30_5_270003.txt')
+// let inicio = new Date().getTime() / 1000;
+// let resultado = construtivo(instancia)
+// let fim = new Date().getTime() / 1000;
+// printSolucao(instancia, resultado)
+// console.log('Tempo de execução:', fim - inicio)
 
 
 // Teste com a instância do enunciado

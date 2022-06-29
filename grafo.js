@@ -9,7 +9,7 @@ class Grafo {
 
     addNo(id, peso) {
         this.grafo[id] = []
-        this.nos.push({ id: parseInt(id), peso: parseFloat(peso), grau: 0 })
+        this.nos.push({ id: parseInt(id), peso: parseFloat(peso), grau: 0, somaArestas: 0 })
         this.pesos_nos.push(parseFloat(peso))
     }
 
@@ -48,10 +48,17 @@ class Grafo {
             // Acrescenta o grau de cada nó
             let no_aux = this.getNo(x)
             no_aux.grau += 1
+            no_aux.somaArestas += peso
             // Cria a aresta
             this.arestas.push({ id: x, vizinho: y, peso: peso })
         }
     }
+
+    // getSomaPesoArestas(vertice){
+    //     // let lista_adjacencia = this.grafo[vertice]
+    //     let sub = getSubgrafo(vertice)
+    //     let 
+    // }
 
     getSubgrafo(vertices) {
         const g_sub = new Grafo()
@@ -88,3 +95,19 @@ module.exports = Grafo;
 // console.log('grafo', g.grafo)
 // console.log('arestas', g.arestas)
 // console.log('nos', g.nos)
+
+// Exemplo do grafo acima
+/*
+grafo { '1': [ 2, 3 ], '2': [ 1 ], '3': [ 1 ] }
+arestas [
+  { id: 1, vizinho: 2, peso: 3.5 },
+  { id: 2, vizinho: 1, peso: 3.5 },
+  { id: 1, vizinho: 3, peso: 4.5 },
+  { id: 3, vizinho: 1, peso: 4.5 }
+]
+nos [
+  { id: 1, peso: 6, grau: 2, somaArestas: 8 },
+  { id: 2, peso: 4, grau: 1, somaArestas: 3.5 },
+  { id: 3, peso: 8, grau: 1, somaArestas: 4.5 }
+]
+*/
