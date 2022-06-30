@@ -48,7 +48,7 @@ for (const caminho_instancia of instanciasRodar) {
     // que recebe colaborações de usuários
     const fator_diferenca = 2
     const tempo = (instancia.getNumElementos() / 4) * fator_diferenca
-    const numExecucoes = 1
+    const numExecucoes = 10
     const seedPrincipal = 123456
 
     let qualidades = []
