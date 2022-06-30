@@ -1,4 +1,4 @@
-# clusterizacao_capacitada
+# Trabalho 1 - Inteligência Computacional 2022.1
 
 O Problema da Clusterização Capacitada consiste na formação de agrupamentos com algumas
 características específicas. Na definição do problema, considere um grafo G=(V, E) ponderado nos
