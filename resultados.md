@@ -1,5 +1,7 @@
 \* Busca local (v1) todas deram o mesmo resultado\
 
+\* Resultados obtidos usando a semente: 123456
+
 Instancia          | construtivo (v1) | busca local (v1) | VND       | Média VND | Literatura
 ------------------ | ---------------- | ---------------- | --------- | --------- | ---------- 
 Sparce-82_01,txt   | 717,46           | 682,04           | 1264,95   | 1210,01   | 1342,17

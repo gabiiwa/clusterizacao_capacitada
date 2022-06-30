@@ -12,7 +12,7 @@ guloso (instancia):
     V = ordena_nós(instancia) # Conjunto de candidatos
 
     while V diferente de vazio:
-        v = heuristica_local(V, c) # Heuristica de seleção de elementos
+        v = heuristicaLocal(V, c) # Heuristica de seleção de elementos
         if v é null:
             s = funcao_add_na_solucao(c, s)
             c = []
@@ -31,7 +31,7 @@ guloso (instancia):
 ```
 
 ```python
-heuristica_local(V, c):
+heuristicaLocal(V, c):
     #retira o primeiro elemento da lista
     i=0
     aux = primeiro elemento de V
@@ -50,7 +50,7 @@ heuristica_local(V, c):
 ```python
 funcao_verificacao(s_linha):
     #restrição inferior e restrição superior
-    if soma_peso_vertices(s_linha) >= L and soma_peso_vertices(s_linha) <= U:
+    if somaPesoVertices(s_linha) >= L and somaPesoVertices(s_linha) <= U:
         return True
     return False
     
@@ -69,7 +69,7 @@ funcao_add_na_solucao(c, s):
                     soma_aresta += peso da aresta v_j e c_i
             # Se a soma das arestas for maior que a soma já armazenada
             # indica o cluster j como o cluster que o c_i vai entrar
-            if soma_aresta > maior_soma and soma_peso_vertices(s_j união c_i) <= U:
+            if soma_aresta > maior_soma and somaPesoVertices(s_j união c_i) <= U:
                 indice_do_cluster_pra_entrar = j
 
         # Coloca o c_i no cluster que deu a maior soma

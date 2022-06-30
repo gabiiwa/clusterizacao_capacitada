@@ -8,25 +8,25 @@ def construtivo2 (instancia):
     S = [] # Solução inicial (começa vazia)
     c = [] # Fila de espera, ou cluster parcial
     n = instancia.num_clusters # Número de clusters indicado na instância     
-    V = ordena_vertices(instancia) # Vetor ordenado pelo grau dos vértices, do maior para menor
+    V = ordenaVertices(instancia) # Vetor ordenado pelo grau dos vértices, do maior para menor
 
     # Na etapa 1, monta n clusters que atendem a restrição inferior
     while V diferente de vazio and len(S) < n:
-        v = heuristica_local(V, c) # Seleciona melhor primeiro vértice
+        v = heuristicaLocal(V, c) # Seleciona melhor primeiro vértice
         c_linha = c união v # Constroi um cluster parcial
-        if soma_peso_vertices(c_linha) >= L and soma_peso_vertices(c_linha) <= U:
+        if somaPesoVertices(c_linha) >= L and somaPesoVertices(c_linha) <= U:
             # Se o conjunto c atende pelo menos a restrição inferior
             # adiciona o cluster parcial a solução
             s = s união c_linha
             # Limpa o cluster parcial
             c = []
-        elif soma_peso_vertices(c_linha) < L:
+        elif somaPesoVertices(c_linha) < L:
             # Se o conjunto c parcial não atende a restrição inferior
             # esse conjunto passa a ser o conjunto c
             c = c_linha
         else:
             c_espera = c_espera união v
-            if soma_peso_vertices(c_espera) >= L and soma_peso_vertices(c_espera) <= U:
+            if somaPesoVertices(c_espera) >= L and somaPesoVertices(c_espera) <= U:
                 # Se o conjunto c atende pelo menos a restrição inferior
                 # adiciona o cluster parcial a solução
                 s = s união c_espera
@@ -37,7 +37,7 @@ def construtivo2 (instancia):
     # e recalcula a ordenação
     if c_espera não for vazio:
         V = V união c_espera
-        V = ordena_vertices(V)
+        V = ordenaVertices(V)
 
     # Na etapa 2, coloca os vértices restantes na melhor posição dentro
     # dos clusters já criados
@@ -57,7 +57,7 @@ def construtivo2 (instancia):
             # Se a soma das arestas for maior que a soma já armazenada
             # indica o cluster j como o cluster que o v_i vai entrar
             if soma_aresta > maior_soma:
-                if soma_peso_vertices(s_j união v_i) <= U:
+                if somaPesoVertices(s_j união v_i) <= U:
                     # Se s_j união v_i atende a restrição superior
                     # marca esse cluster pro vértice entrar
                     indice_do_cluster_pra_entrar = j
@@ -73,7 +73,7 @@ def construtivo2 (instancia):
             
             # Percorre os clusters de S
             for s_j em S:
-                if soma_peso_vertices(s_j união v_i) <= U:
+                if somaPesoVertices(s_j união v_i) <= U:
                     s_j = v_i união s_j 
                     retira v_i da lista c
                     break # Interrompe o loop quando achar um cluster pra colocar o vértice
@@ -81,7 +81,7 @@ def construtivo2 (instancia):
 ```
 
 ```python
-def heuristica_local(V, c):
+def heuristicaLocal(V, c):
     i=0
     aux = None
     # Enquanto nenhum vértice foi escolhido

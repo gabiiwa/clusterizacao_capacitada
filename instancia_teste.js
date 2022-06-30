@@ -1,5 +1,8 @@
 const Grafo = require('./grafo')
 
+/**
+ * Instância de teste usada para o desenvolvimento dos algoritmos
+ */
 class InstanciaTeste {
     constructor() {
         this.grafoInstancia = new Grafo()
@@ -49,15 +52,19 @@ class InstanciaTeste {
     getNumClusters() {
         return 3
     }
+
     getNumElementos() {
         return 10
     }
+
     getGrafo() {
         return this.grafoInstancia
     }
+
     get_L() {
         return 3.0
     }
+    
     get_U() {
         return 5.0
     }

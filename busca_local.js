@@ -1,225 +1,252 @@
-const { construtivo, verifica_restricao, printSolucao, getQualidade } = require('./construtivo')
+const { construtivo, verificaRestricao, printSolucao, getQualidade } = require('./construtivo')
 const SFCRandom = require('./SFCRandom')
 
-/*
-function compare(a, b) {
-  if (a is less than b by some ordering criterion) {
-    return -1;
-  }
-  if (a is greater than b by the ordering criterion) {
-    return 1;
-  }
-  // a must be equal to b
-  return 0;
-}
-array.sort(compare)
-*/
-
-/////Funções auxiliares//////////
-function ordena_vertices(instancia, s) {
-    // vertices_cluster = [...s]
+/**
+ * Ordena vértices de um cluster pelo somatório das arestas
+ * de cada vértice
+ * @param {RanRealSparse|Handover} instancia 
+ * @param {array} s Cluster da solução
+ * @returns {array}
+ */
+function ordenaVertices(instancia, s) {
     let subgrafo = instancia.getGrafo().getSubgrafo(s)
     let nos = [...subgrafo.nos]
 
+    //vértices de s ordenados pela soma dos pesos das arestas, do menor pro maior
     nos.sort((a, b) => a.somaArestas - b.somaArestas)
 
-    return nos//vértices de s_j ordenados pela soma dos pesos das arestas, do menor pro maior
+    return nos
 }
 
-
-function calcula_qualidade_entrada(instancia, v, s) {
-    // let s_v = [...s]
-    // s_v.push(v)
-    // let subgrafo = instancia.getGrafo().getSubgrafo(s_v)
-    // let nos = subgrafo.nos
-    // let qualidade = 0
-    // for (let i = 0; i < nos.length; i++) {
-    //     qualidade += nos[i].somaArestas
-    // }
-    // return qualidade//soma das arestas de v_i entrando em s_k
-
+/**
+ * Calcula o somatório dos pesos das arestas entrando no cluster pela inserção
+ * do vértice 'v'
+ * @param {RanRealSparse|Handover} instancia 
+ * @param {{ id: integer, peso: float, grau: integer somaArestas: float }} v Vértice entrando no cluster
+ * @param {array} s Cluster da solução
+ * @returns {float}
+ */
+function calculaQualidadeEntrada(instancia, v, s) {
     let s_v = [...s]
+
+    // Obtem da lista de adjacência os vizinhos de v
     let vizinhos_de_v = instancia.getGrafo().grafo[v.id];
-    s_v = s_v.filter(a => vizinhos_de_v.includes(a.id)) // Pega todos os vertices de s que são vizinhos de v
+
+    // Pega todos os vertices de s que são vizinhos de v
+    s_v = s_v.filter(a => vizinhos_de_v.includes(a.id))
     let qualidade = 0
+
+    // Percorre os vertices vizinhos de s
     for (let vizinho of s_v) {
         let aresta = instancia.getGrafo().getAresta(v.id, vizinho.id)
         if (aresta) {
             qualidade += aresta.peso
         }
     }
-    return qualidade//soma das arestas de v_i entrando em s_k
+
+    return qualidade
 }
 
-
-function calcula_qualidade_saida(instancia, v, s) {
-    // let s_v = [...s]
-    // s_v.splice(s_v.indexOf(v), 1)
-    // let subgrafo = instancia.getGrafo().getSubgrafo(s_v)
-    // let nos = subgrafo.nos
-    // let qualidade = 0
-    // for (let i = 0; i < nos.length; i++) {
-    //     qualidade += nos[i].somaArestas
-    // }
-    // return qualidade //soma das arestas de v_i saindo de s_j
-
+/**
+ * Calcula o somatório dos pesos das arestas saindo no cluster pela inserção
+ * do vértice 'v'
+ * @param {RanRealSparse|Handover} instancia 
+ * @param {{ id: integer, peso: float, grau: integer somaArestas: float }} v Vértice entrando no cluster
+ * @param {array} s Cluster da solução
+ * @returns {float}
+ */
+function calculaQualidadeSaida(instancia, v, s) {
     let s_v = [...s]
+
+    // Obtem da lista de adjacência os vizinhos de v
     let vizinhos_de_v = instancia.getGrafo().grafo[v.id];
-    s_v = s_v.filter(a => vizinhos_de_v.includes(a.id)) // Pega todos os vertices de s que são vizinhos de v
+
+    // Pega todos os vertices de s que são vizinhos de v
+    s_v = s_v.filter(a => vizinhos_de_v.includes(a.id))
     let qualidade = 0
+
+    // Percorre os vertices vizinhos de s
     for (let vizinho of s_v) {
         let aresta = instancia.getGrafo().getAresta(v.id, vizinho.id)
         if (aresta) {
             qualidade += aresta.peso
         }
     }
-    return qualidade //soma das arestas de v_i saindo de s_j
+
+    return qualidade
 }
 
 
-/////////Busca Local//////////////
-function busca_local(instancia, tempo, seed) {
-    //  Gera a solução inicial com o construtivo
+/**
+ * Procedimento de busca local VND, com escolha aleatória de duas vizinhanças
+ * @param {RanRealSparse|Handover} instancia 
+ * @param {float} tempo 
+ * @param {integer} seed 
+ * @returns {array[]} Solução melhorada
+ */
+function buscaLocal(instancia, tempo, seed) {
+    // Inicia o gerador de números pseudoaleatórios
     SFCRandom.seed(seed);
+
+    // Calcula a solução inicial
     S = construtivo(instancia)
-    let conta_sol_viaveis = 0
-    let consta_sol_inviaveis = 0
+
+    // Inicia o contador de tempo
     let inicio = new Date().getTime() / 1000
     let fim = new Date().getTime() / 1000
 
     while (fim - inicio < tempo) {
-        //gera lista de candidatos da vizinhança da solução
+
         let melhor_vizinho = null;
+
+        // Escolhe aleatoriamente uma vizinhança
         if (SFCRandom.random() > 0.5) {
-            //console.log('one move')
-            melhor_vizinho = primeiro_vizinho_melhor_one_move(instancia, S)
+            // Executa o movimento one_move primeiro
+            melhor_vizinho = primeiroVizinhoMelhor_OneMove(instancia, S)
             if (melhor_vizinho === null) {
-                //console.log('swap')
-                melhor_vizinho = primeiro_vizinho_melhor_swap(instancia, S)
+                // Se o one_move atingir o otimo local, tenta a vizinhança por swap
+                melhor_vizinho = primeiroVizinhoMelhor_Swap(instancia, S)
             }
         } else {
-            //console.log('swap')
-            melhor_vizinho = primeiro_vizinho_melhor_swap(instancia, S)
+            // Executa o movimento swap primeiro
+            melhor_vizinho = primeiroVizinhoMelhor_Swap(instancia, S)
             if (melhor_vizinho === null) {
-                //console.log('one move')
-                melhor_vizinho = primeiro_vizinho_melhor_one_move(instancia, S)
+                // Se o one_move atingir o otimo local, tenta a vizinhança por one_move
+                melhor_vizinho = primeiroVizinhoMelhor_OneMove(instancia, S)
             }
         }
-        //melhor_vizinho = primeiro_vizinho_melhor_one_move(instancia, S)
-        //melhor_vizinho = primeiro_vizinho_melhor_swap(instancia, S)
+
         if (melhor_vizinho == null) {
+            // Se as duas vizinhanças atingirem o ótimo local, para o algoritmo
             break
-        }
-        else {
+        } else {
+            // Se encontrar uma solução melhor, atualiza a solução S
             S = melhor_vizinho
         }
+
+        // Atualiza o contador de tempo
         fim = new Date().getTime() / 1000
-        //console.log('tempo:', fim - inicio, tempo)
     }
+
     return S
 }
-
-
-// def busca_local(instancia):
-//     # Gera a solução inicial com o construtivo
-//     S = construtivo(instancia)
-//     conta_sol_viaveis = 0
-//     conta_sol_inviaveis = 0
-//     while não chega no critério de parada:
-//         # gera lista de candidatos da vizinhança da solução
-//         melhor_vizinho = primeiro_vizinho_melhor(S)
-//         if melhor_vizinho é None:
-//             break
-//         else:
-//             S = melhor_vizinho
-//     return S
-
-// def ordena_vertices(s):
-//     return #vértices de s_j ordenados pela soma dos pesos das arestas, do menor pro maior
-
-// def calcula_qualidade_entrada(v, s):
-//     return #soma das arestas de v_i entrando em s_k
-
-// def calcula_qualidade_saida(v, s):
-//     return #soma das arestas de v_i saindo de s_j
-
-// #----------------
-let conta_sol_inviaveis = 0;
-let conta_sol_viaveis = 0;
-
-//faz a diferença dos conjuntos de nos do cluster com o nó candidato
+ 
+/**
+ * Faz a diferença dos conjuntos de vértices do cluster com o vértice candidato
+ * @param {array} lst1 
+ * @param {array} lst2 
+ * @returns {array}
+ */
 function diferenca(lst1, lst2) {
     let comp = lst1.filter(value => [...lst2].map(x => parseInt(x.id)).includes(parseInt(value.id)) === false)
     return comp;
 }
 
+/**
+ * Faz a união dos conjuntos de vértices por concatenação
+ * @param {array} lst1 
+ * @param {array} lst2 
+ * @returns {array}
+ */
 function union(lst1, lst2) {
     let uni = lst1.concat(lst2)
     return uni
 }
 
-function remover(s, v){
+/**
+ * Remove um vértice de um cluster pelo id desse vértice
+ * @param {array} s Cluster da solução
+ * @param {{ id: integer, peso: float, grau: integer somaArestas: float }} v Vértice a remover
+ * @returns Vértice removido
+ */
+function remover(s, v) {
     let i = 0
-    for(i=0; i<s.length;i++){
-        if(s[i].id === v.id){
+    for (i = 0; i < s.length; i++) {
+        if (s[i].id === v.id) {
             break;
         }
     }
     return s.splice(i, 1)
 }
 
-function primeiro_vizinho_melhor_one_move(instancia, S) {
-    // Vizinhança de tirar um vertice de um cluster e colocar no outro
-    //console.log('teste3',S.length)
-    for (let j = 0; j < S.length; j++) { // lista os clusters da solução
-        vertices_ordenados = ordena_vertices(instancia, S[j])
+/**
+ * Vizinhança dada pelo movimento de tirar um vértice de um cluster e colocar em outro cluster
+ * que traga um ganho de qualidade a solução usando Primeiro Aprimorante.
+ * @param {RanRealSparse|Handover} instancia 
+ * @param {array[]} S 
+ * @returns {array[] | null}
+ */
+function primeiroVizinhoMelhor_OneMove(instancia, S) {
+
+    // Percorre os clusters da solução
+    for (let j = 0; j < S.length; j++) { 
+        vertices_ordenados = ordenaVertices(instancia, S[j])
         if (vertices_ordenados.length === 0) {
+            // Se um cluster não tiver vértices, continua o loop.
+            // Essa condição pode acontecer nas instâncias Handover.
             continue
         }
-        //proximo nó candidato dentro de um mesmo cluster
+
+        // Percorre os vértices ordenados pelos pesos das arestas do cluster S[j]
         for (let prox_ind = 0; prox_ind < S[j].length; prox_ind++) {
-            //itera nos nós do cluster j, ordenados pelos pesos das arestas
             v_i = vertices_ordenados[prox_ind]
-            if (verifica_restricao(instancia, diferenca(S[j], [v_i]))) {
-                qualidade_saida = calcula_qualidade_saida(instancia, v_i, S[j])
-                for (let k = j; k < S.length; k++) { // Percorre a solução em s_k, como cluster de destino
-                    if (k !== j) { // Garante que o cluster de destino (s_k) é diferente do cluster de origem (s_j)
-                        //console.log('teste c',v_i,S[j],diferenca([v_i], S[j]))
-                        //console.log('teste u',v_i,S[k],union([v_i],S[k]))
-                        if (verifica_restricao(instancia, union(S[k], [v_i]))) {
-                            qualidade_entrada = calcula_qualidade_entrada(instancia, v_i, S[k])
-                            conta_sol_viaveis += 1
-                            //console.log('qualidade_entrada',qualidade_entrada,'qualidade_saida',qualidade_saida)
+
+            // Verifica se retirar o vértice do cluster S[j] viola as restrições
+            if (verificaRestricao(instancia, diferenca(S[j], [v_i]))) {
+
+                // Se puder ser retirado, calcula a qualidade de saída
+                qualidade_saida = calculaQualidadeSaida(instancia, v_i, S[j])
+
+                // Percorre a solução em s_k, como cluster de destino
+                for (let k = j; k < S.length; k++) { 
+
+                    // Garante que o cluster de destino (s_k) é diferente do cluster de origem (s_j)
+                    if (k !== j) { 
+
+                        // Verifica se inserir o vertice no cluster S[k] viola as restrições
+                        if (verificaRestricao(instancia, union(S[k], [v_i]))) {
+
+                            // Se puder ser inserido, calcula a qualidade de entrada
+                            qualidade_entrada = calculaQualidadeEntrada(instancia, v_i, S[k])
+
+                            // Se a qualidade de entrada for maior que a qualidade de saida
+                            // significa que vai aumentar o valor da qualidade total da solução
+                            // e o movimento é executado na vizinhança
                             if (qualidade_entrada > qualidade_saida) {
                                 // retira v_i de s_j
                                 remover(S[j], v_i)
                                 // colocar v_i em s_k
                                 S[k].push(v_i)
+
+                                // Retorna direto a solução na política do primeiro aprimorante
                                 return S
                             }
-                        } else {
-                            conta_sol_inviaveis += 1
-                        }
+                        } 
                     }
                 }
             }
-
         }
-
-        //console.log('teste2',v_i, S[j])
-        //for v_i in vertices_ordenados: // Percorre a lista os vértices do cluster em (v_i) como vértice a mudar
-
     }
+
+    // Se não encontrar nenhuma solução melhor na vizinhança, 
+    // ou seja, chegou no ótimo local, retorna null
     return null
 }
 
-function primeiro_vizinho_melhor_swap(instancia, S) {
+/**
+ * Vizinhança dada pelo movimento de escolher dois clusters em uma lista 
+ * de permutações 2 a 2 aleatórias e trocar um vértice entre eles de forma que
+ * que traga um ganho de qualidade a solução usando Primeiro Aprimorante.
+ * @param {RanRealSparse|Handover} instancia 
+ * @param {array[]} S 
+ * @returns {array[] | null}
+ */
+function primeiroVizinhoMelhor_Swap(instancia, S) {
 
     let permutacoes = []
     let p_temp = []
-    let qe = getQualidade(instancia, S)
 
-    // Gera permutações de clusters
+    // Gera permutações sem repetição de clusters
     for (let j = 0; j < S.length; j++) {
         for (let k = j; k < S.length; k++) {
             if (j !== k) {
@@ -237,40 +264,46 @@ function primeiro_vizinho_melhor_swap(instancia, S) {
         }
     }
 
+    // Percorre as permutações de clusters
     for (let p = 0; p < permutacoes.length; p++) {
         let s_j = S[permutacoes[p][0]]
         let s_k = S[permutacoes[p][1]]
 
-        //console.log(s_j, s_k)
+        // Ordena os vértices dos clusters
+        let vertices_ordenados_j = ordenaVertices(instancia, s_j)
+        let vertices_ordenados_k = ordenaVertices(instancia, s_k)
 
-        let vertices_ordenados_j = ordena_vertices(instancia, s_j)
-        let vertices_ordenados_k = ordena_vertices(instancia, s_k)
-
+        // Percorre todas as combinações de vértices dos clusters 
         for (let j = 0; j < vertices_ordenados_j.length; j++) {
             for (let k = 0; k < vertices_ordenados_k.length; k++) {
                 let vj = vertices_ordenados_j[j]
                 let vk = vertices_ordenados_k[k]
 
-                // Verifica restrições
                 let dif_s_j_vj = diferenca(s_j, [vj])
                 let dif_s_k_vk = diferenca(s_k, [vk])
-
-                let saida_vj_de_j = verifica_restricao(instancia, dif_s_j_vj)
-                let saida_vk_de_k = verifica_restricao(instancia, dif_s_k_vk)
-                let entrada_vj_em_k = verifica_restricao(instancia, union(dif_s_k_vk, [vj]))
-                let entrada_vk_em_j = verifica_restricao(instancia, union(dif_s_j_vj, [vk]))
+                
+                // Verifica restrições de saida e entrada dos vértices dos clusters
+                let saida_vj_de_j = verificaRestricao(instancia, dif_s_j_vj)
+                let saida_vk_de_k = verificaRestricao(instancia, dif_s_k_vk)
+                let entrada_vj_em_k = verificaRestricao(instancia, union(dif_s_k_vk, [vj]))
+                let entrada_vk_em_j = verificaRestricao(instancia, union(dif_s_j_vj, [vk]))
 
                 if (saida_vj_de_j && entrada_vj_em_k && saida_vk_de_k && entrada_vk_em_j) {
-                    let qualidade_saida_vj_de_j = calcula_qualidade_saida(instancia, vj, s_j) * -1
-                    let qualidade_saida_vk_de_k = calcula_qualidade_saida(instancia, vk, s_k) * -1
-                    let qualidade_entrada_vj_em_k = calcula_qualidade_entrada(instancia, vj, dif_s_k_vk)
-                    let qualidade_entrada_vk_em_j = calcula_qualidade_entrada(instancia, vk, dif_s_j_vj)
+                    // Se for possível trocar os vértices, calcula as qualidades de saida e entrada
+                    // para cada vértice de cada cluster
+                    let qualidade_saida_vj_de_j = calculaQualidadeSaida(instancia, vj, s_j) * -1
+                    let qualidade_saida_vk_de_k = calculaQualidadeSaida(instancia, vk, s_k) * -1
+                    let qualidade_entrada_vj_em_k = calculaQualidadeEntrada(instancia, vj, dif_s_k_vk)
+                    let qualidade_entrada_vk_em_j = calculaQualidadeEntrada(instancia, vk, dif_s_j_vj)
 
+                    // A qualidade geral é o somatório das qualidades
                     let qualidade_geral = qualidade_saida_vj_de_j + qualidade_entrada_vj_em_k
                     qualidade_geral += qualidade_saida_vk_de_k + qualidade_entrada_vk_em_j
-                
+
                     if (qualidade_geral > 0) {
-                        //console.log( 'qualidade_geral:', qualidade_geral)
+                        // Se o somatório das qualidades for maior que 0, significa um ganho de 
+                        // qualidade na solução, executar o movimento
+
                         // retira vj de _s_j
                         remover(s_j, vj)
                         // retira vk de _s_k
@@ -279,24 +312,28 @@ function primeiro_vizinho_melhor_swap(instancia, S) {
                         s_k.push(vj)
                         // colocar vk em s_j
                         s_j.push(vk)
+
+                        // Retorna direto a solução na política do primeiro aprimorante
                         return S
                     }
                 }
             }
         }
     }
+
+    // Se não encontrar nenhuma solução melhor na vizinhança, 
+    // ou seja, chegou no ótimo local, retorna null
     return null
 }
 
 module.exports = {
-    busca_local,
-    ordena_vertices,
-    calcula_qualidade_entrada,
-    calcula_qualidade_saida,
+    buscaLocal,
+    ordenaVertices,
+    calculaQualidadeEntrada,
+    calculaQualidadeSaida,
     diferenca,
     union,
     remover,
-    primeiro_vizinho_melhor_one_move,
-    primeiro_vizinho_melhor_swap
+    primeiroVizinhoMelhor_OneMove,
+    primeiroVizinhoMelhor_Swap
 }
-

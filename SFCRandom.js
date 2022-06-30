@@ -1,3 +1,7 @@
+/**
+ * Classe geradora de números pseudoaleatórios
+ * Fonte: https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript
+ */
 class SFCRandom {
     static sfc32(a, b, c, d) {
         return function () {
@@ -13,6 +17,10 @@ class SFCRandom {
         }
     }
 
+    /**
+     * Define qual é a semente a ser usada na geração dos números
+     * @param {number} seed 
+     */
     static seed(seed) {
         var _seed = seed ^ 0xDEADBEEF; // 32-bit seed with optional XOR value
         // Pad seed with Phi, Pi and E.
@@ -20,8 +28,13 @@ class SFCRandom {
         this.rand = this.sfc32(0x9E3779B9, 0x243F6A88, 0xB7E15162, _seed);
     }
 
+    /**
+     * Obtem um número aleatório proporcional a semente fornecida
+     * @returns {number} Número no intervalo [0-1)
+     */
     static random() {
         return this.rand();
     }
 }
+
 module.exports = SFCRandom;

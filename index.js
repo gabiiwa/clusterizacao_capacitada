@@ -4,7 +4,7 @@ const { getQualidade, construtivo } = require('./construtivo')
 // Classes de leitura das instâncias
 const RanRealSparse = require('./ranreal_sparse')
 const Handover = require('./handover')
-const { busca_local } = require('./busca_local')
+const { buscaLocal } = require('./busca_local')
 
 const instanciasRodar = [
     'instancias/Sparse82/Sparse82_01.txt',
@@ -48,7 +48,7 @@ for (const caminho_instancia of instanciasRodar) {
     // que recebe colaborações de usuários
     const fator_diferenca = 2
     const tempo = (instancia.getNumElementos() / 4) * fator_diferenca
-    const numExecucoes = 10
+    const numExecucoes = 1
     const seedPrincipal = 123456
 
     let qualidades = []
@@ -57,7 +57,7 @@ for (const caminho_instancia of instanciasRodar) {
 
     for (let i = 0; i < numExecucoes; i++) {
         console.log(`Execucao ${i + 1} de ${numExecucoes}, com tempo de ${tempo}s`);
-        S = busca_local(instancia, tempo, seedPrincipal + cont_seed);
+        S = buscaLocal(instancia, tempo, seedPrincipal + cont_seed);
         //S = construtivo(instancia)
         let qualidade = getQualidade(instancia, S)
         qualidades.push(qualidade)
