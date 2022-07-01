@@ -72,13 +72,19 @@ def construtivo2 (instancia):
             # incluir esse vértice em qualquer cluster onde ele possa entrar
             
             # Percorre os clusters de S
+            entrou = False
             entrou=False
             for s_j em S:
                 if somaPesoVertices(s_j união v_i) <= U:
                     s_j = v_i união s_j 
                     retira v_i da lista c
+                    entrou = True
                     entrou=True
                     break # Interrompe o loop quando achar um cluster pra colocar o vértice
+            if v_i não entrou em algum cluster:
+                # Permite que este entre em qualquer cluster, mesmo que ultrapasse a restrição superior
+                coloca v_i em S
+                retira v_i da lista de candidatos V
             if entrou==False:
                 # Não conseguiu colocar em nenhum cluster. Cria um novo mesmo q seja inválido
                 S = S união [v_i]
