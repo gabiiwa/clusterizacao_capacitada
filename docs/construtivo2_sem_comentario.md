@@ -4,7 +4,6 @@
 ```python
 
 def construtivo2 (instancia):
-    #lista de listas de nós
     S = [] # Solução inicial (começa vazia)
     c = [] # Fila de espera, ou cluster parcial
     n = instancia.num_clusters # Número de clusters indicado na instância     
@@ -72,17 +71,11 @@ def construtivo2 (instancia):
             # incluir esse vértice em qualquer cluster onde ele possa entrar
             
             # Percorre os clusters de S
-            entrou=False
             for s_j em S:
                 if somaPesoVertices(s_j união v_i) <= U:
                     s_j = v_i união s_j 
                     retira v_i da lista c
-                    entrou=True
                     break # Interrompe o loop quando achar um cluster pra colocar o vértice
-            if entrou==False:
-                # Não conseguiu colocar em nenhum cluster. Cria um novo mesmo q seja inválido
-                S = S união [v_i]
-                retira v_i de V
     return S
 ```
 
