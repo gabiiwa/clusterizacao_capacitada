@@ -1,57 +1,82 @@
 # Busca Local
 
-buscaLocal usando First Improvement
+Implementação do método Variable Neighborhood Descent (VND) com estratégia aleatória de mudança de vizinhança, com alpha fixo de 0.5
     
 ```python
-def buscaLocal(instancia):
-    # Gera a solução inicial com o construtivo
-    S = construtivo(instancia)
-    conta_sol_viaveis = 0
-    conta_sol_inviaveis = 0
-    while não chega no critério de parada:
-        # gera lista de candidatos da vizinhança da solução
-        melhor_vizinho = primeiro_vizinho_melhor(S)
-        if melhor_vizinho é None:
-            break
+def VND(instancia, tempo, semente):
+    alpha = 0.5 # Define que a chance de cada vizinhança é de 50 %
+    Random.seed(semente) # Inicia o algoritmo de números aleatórios com a semente
+    S = construtivo(instancia) # Gera a solução inicial com o construtivo
+
+    while não atingiu o tempo limite:
+        if random() > alpha:
+            melhor_vizinho = primeiroVizinhoMelhor_Inserção(S)
+            if Inserção chegou no ótimo local:
+                melhor_vizinho = primeiroVizinhoMelhor_Troca(S)
         else:
+            melhor_vizinho = primeiroVizinhoMelhor_Troca(S)
+            if Inserção chegou no ótimo local:
+                melhor_vizinho = primeiroVizinhoMelhor_Inserção(S)
+
+        if melhor_vizinho é diferente de None:
             S = melhor_vizinho
+        else:
+            Interrompe o loop # chegou no ótimo local das duas vizinhanças
+
     return S
 ```
 
 ```python
-def ordenaVertices(s):
-    return vértices de s_j ordenados pela soma dos pesos das arestas, do menor pro maior
-
-def calculaQualidadeEntrada(v, s):
-    return soma das arestas de v_i entrando em s_k
-
-def calculaQualidadeSaida(v, s):
-    return soma das arestas de v_i saindo de s_j
-```
-
-```python
-def primeiro_vizinho_melhor(S):
-    # Vizinhança de tirar um vertice de um cluster e colocar no outro
-
-    for s_j in S: # lista os clusters da solução
+def primeiroVizinhoMelhor_Inserção(S):
+    for s_j in S: # Percorre a solução em s_j, como cluster de origem
+        # Ordena os vértices pela soma dos pesos das arestas, do menor para o maior
         vertices_ordenados = ordenaVertices(s_j)
-        v_i = vertices_ordenados[0]
-        #for v_i in vertices_ordenados: # Percorre a lista os vértices do cluster em (v_i) como vértice a mudar
-        qualidade_saida = calculaQualidadeSaida(v_i, s_j)
-        for s_k in S: # Percorre a solução em s_k, como cluster de destino
-            if s_k != s_j: # Garante que o cluster de destino (s_k) é diferente do cluster de origem (s_j)
-                qualidade_entrada = calculaQualidadeEntrada(v_i, s_k)
-                if verificaRestricao(v_i interseção s_j) and verificaRestricao(v_i união s_k):
-                    conta_sol_viaveis += 1
-                    if qualidade_entrada > qualidade_saida:
-                        retira v_i de s_j
-                        colocar v_i em s_k
-                        return S
-                else:
-                    conta_sol_inviaveis += 1
+
+        for v_i in vertices_ordenados: # Percorre os vértices que vão sair
+            if verificaRestricao(v_i - s_j):
+                qualidade_saida = calculaQualidadeSaida(v_i, s_j)
+                for s_k in S: # Percorre a solução em s_k, como cluster de destino
+                    if s_k != s_j: # Garante que o cluster de destino (s_k) é diferente do cluster de origem (s_j)
+                        if verificaRestricao(v_i união s_k):
+                            qualidade_entrada = calculaQualidadeEntrada(v_i, s_k)
+                            if qualidade_entrada > qualidade_saida:
+                                # Realiza o movimento na vizinhança
+                                retira v_i de s_j
+                                colocar v_i em s_k
+                                # E sai do algoritmo, pela politica
+                                # primeiro aprimorante
+                                return S
+
+    # Se não encontrar uma solução melhor, ele está no ótimo local
     return None
 
 ```
 
-s = [[3,4],[2,1,0,6],[8,7,5,9]]
-s1 = [[3,4],[2,0,6],[1,8,7,5,9]]
+```python
+def primeiroVizinhoMelhor_Troca(S):
+    # Gera permutações aleatórias de clusters
+    permutações = GeraPermutaçõesSemRepetição(S)
+
+    for s_j, s_j in permutações: # Percorre as permutações de clusters
+        vertices_ordenados_j = ordenaVertices(s_j)
+        vertices_ordenados_k = ordenaVertices(s_k)
+
+        # Percorre as listas ordenadas de vértices dos clusters
+        for vj in vertices_ordenados_j:
+            for vk in vertices_ordenados_k:
+                # Verifica as condições de saida e entrada dos vértices
+                if vj pode sair de s_j e entrar em s_k and vk pode sair de s_k e entrar em s_j:
+                    qualidade_geral = qualidade de entrada - qualidade de saída
+                    if qualidade_geral > 0:
+                        # Realiza o movimento na vizinhança
+                        retira vj de s_j
+                        retira vk de s_k
+                        colocar vj em s_k
+                        colocar vk em s_j
+                        # E sai do algoritmo, pela politica
+                        # primeiro aprimorante
+                        return S
+
+    # Se não encontrar uma solução melhor, ele está no ótimo local
+    return None
+```
